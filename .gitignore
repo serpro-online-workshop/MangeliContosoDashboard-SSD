@@ -10,6 +10,7 @@
 *.userosscache
 *.sln.docstates
 *.sln
+!ContosoDashboard.sln
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -61,6 +62,10 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+AppData/
+*.db
+*.db-shm
+*.db-wal
 
 # StyleCop
 StyleCopReport.xml

@@ -1,0 +1,41 @@
+@using ContosoDashboard.Models
+
+@if (Documents.Count > 0)
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Uploaded</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Project</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var document in Documents)
+                {
+                    <tr>
+                        <th scope="row">@document.Title</th>
+                        <td>@document.Category</td>
+                        <td>@document.UploadDate.ToLocalTime().ToString("g")</td>
+                        <td>@FormatFileSize(document.FileSize)</td>
+                        <td>@(document.Project?.Name ?? "Personal")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="text-muted">No documents uploaded yet.</p>
+}
+
+@code {
+    [Parameter] public IReadOnlyList<Document> Documents { get; set; } = [];
+
+    private static string FormatFileSize(long size) =>
+        size >= 1024 * 1024 ? $"{size / 1024d / 1024d:0.##} MB" : $"{size / 1024d:0.##} KB";
+}

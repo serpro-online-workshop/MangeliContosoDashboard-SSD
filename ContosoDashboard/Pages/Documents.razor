@@ -1,0 +1,49 @@
+@page "/documents"
+@attribute [Authorize]
+@inject IDocumentService DocumentService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Documents - ContosoDashboard</PageTitle>
+
+<h1>My Documents</h1>
+
+@if (isLoading)
+{
+    <p role="status">Loading documents...</p>
+}
+else if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">@errorMessage</div>
+}
+else
+{
+    <DocumentUploadForm UserId="userId" OnUploaded="RefreshDocumentsAsync" />
+    <DocumentList Documents="documents" />
+}
+
+@code {
+    private int userId;
+    private bool isLoading = true;
+    private string? errorMessage;
+    private List<Document> documents = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userIdValue = authenticationState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!int.TryParse(userIdValue, out userId))
+        {
+            errorMessage = "Your account could not be verified.";
+            isLoading = false;
+            return;
+        }
+
+        await RefreshDocumentsAsync();
+        isLoading = false;
+    }
+
+    private async Task RefreshDocumentsAsync()
+    {
+        documents = await DocumentService.GetMyDocumentsAsync(userId);
+    }
+}
