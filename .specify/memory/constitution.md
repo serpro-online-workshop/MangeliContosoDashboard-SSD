@@ -1,50 +1,96 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report (temporary; remove before commit)
+- Version change: (unfilled template) → 1.0.0
+- Modified principles: none renamed (all five principles defined from template placeholders)
+  - [PRINCIPLE_1_NAME] → I. Training-Only Scope
+  - [PRINCIPLE_2_NAME] → II. Offline-First with Infrastructure Abstraction
+  - [PRINCIPLE_3_NAME] → III. Defense-in-Depth Security (NON-NEGOTIABLE)
+  - [PRINCIPLE_4_NAME] → IV. Layered Architecture and Service-Level Authorization
+  - [PRINCIPLE_5_NAME] → V. Simplicity and Spec-Driven Development
+- Added sections: Technology and Platform Constraints; Development Workflow and Quality Gates
+- Removed sections: none
+- Follow-up TODOs: none
+-->
+
+# ContosoDashboard Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Training-Only Scope
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+ContosoDashboard is a fictional application built solely to teach Spec-Driven Development (SDD)
+with GitHub Spec Kit. It MUST NOT be presented, configured, or documented as production-ready.
+Simplifications made for training (mock authentication, `EnsureCreated()`, local storage) MUST be
+documented as known limitations, together with the production alternative.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+Rationale: learners must be able to distinguish training shortcuts from recommended practice.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Offline-First with Infrastructure Abstraction
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+The application MUST run fully offline with no cloud subscriptions or external service
+dependencies. Every infrastructure dependency (database, file storage, authentication) MUST be
+reached through an interface or configuration seam so a cloud implementation (Azure SQL, Azure
+Blob Storage, Microsoft Entra ID) can replace the local one without changing business logic.
+Implementations MUST be selected through dependency injection or configuration.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Rationale: training must work anywhere, while teaching a realistic cloud migration path.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Defense-in-Depth Security (NON-NEGOTIABLE)
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Authorization MUST be enforced at every layer: middleware, `[Authorize]` attributes or policies on
+pages, and checks inside services. Services MUST verify that the current user may access the
+requested resource (IDOR protection) and MUST NOT rely only on UI hiding. Role-based access
+control MUST follow the hierarchy Employee < TeamLead < ProjectManager < Administrator. Secrets
+and credentials MUST NOT be committed to source control. Code MUST be free of OWASP Top 10
+vulnerabilities.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+Rationale: security patterns are a core learning objective and the cost of a missed layer is high.
+
+### IV. Layered Architecture and Service-Level Authorization
+
+Code MUST be organized into Models, Data, Services, and Pages/Shared layers. Pages MUST NOT access
+`ApplicationDbContext` directly; data access and business rules MUST live in services registered
+through dependency injection behind interfaces. New entities MUST be registered in
+`ApplicationDbContext` with explicit relationships and indexes.
+
+Rationale: clear separation keeps features testable and keeps authorization checks in one place.
+
+### V. Simplicity and Spec-Driven Development
+
+Features MUST start from a specification and plan produced with Spec Kit before implementation.
+Solutions MUST use the simplest design that satisfies the specification (YAGNI); added complexity
+MUST be justified in the plan. Unique identifiers or file paths MUST be generated before database
+insertion to avoid duplicate-key violations and orphaned records.
+
+Rationale: the project exists to demonstrate SDD; unspecified or over-built code defeats it.
+
+## Technology and Platform Constraints
+
+- Framework: ASP.NET Core 8.0 with Blazor Server; UI styled with Bootstrap 5.3 and Bootstrap Icons.
+- Database: SQLite through Entity Framework Core. The connection string MUST live in configuration.
+- Authentication: cookie-based mock authentication with claims-based identity (training only).
+- Security headers (CSP, X-Frame-Options, and similar) and cookie sliding expiration MUST be kept.
+- Files MUST be stored locally behind a storage abstraction; no external services are allowed.
+- NuGet package references MUST resolve without warnings on restore.
+
+## Development Workflow and Quality Gates
+
+- Work follows the Spec Kit flow: specify, plan, tasks, implement.
+- Every change MUST build with `dotnet build` without errors before it is considered complete.
+- Changes touching authentication, authorization, or data access MUST be reviewed against
+  Principle III.
+- The README and stakeholder documents MUST be updated when behavior, setup, or the technology
+  stack changes.
+- Behavior with security impact (access control, IDOR checks) SHOULD be covered by automated tests
+  or documented manual test steps.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes other project practices. Amendments MUST be made through a documented
+change that states the rationale and updates the version and Last Amended date. Versioning follows
+semantic versioning: MAJOR for backward-incompatible principle removals or redefinitions, MINOR
+for added or materially expanded principles or sections, PATCH for clarifications and wording.
+Every specification, plan, and pull request MUST be reviewed for compliance with this constitution,
+and any deviation MUST be justified in writing. Use `README.md` for runtime development guidance.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-10-20 | **Last Amended**: 2026-10-20
